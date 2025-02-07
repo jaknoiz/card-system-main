@@ -6,31 +6,30 @@ use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
 {
-    /**
-     * แสดงรายละเอียดผู้ติดต่อ
-     */
     public function showContactDetails($id)
-{
-    $contact = Contact::findOrFail($id);
+    {
+        $contact = Contact::findOrFail($id);
+        $user = auth()->user();
+
+        // ✅ Admin ดูได้ทุกคน
+        // ✅ User ดูเฉพาะของตัวเอง
+        if ($user->role !== 'admin' && $user->id !== $contact->id) {
+            abort(403, 'Unauthorized.');
+        }
+
+        // สร้าง QR Code
+        $currentUrl = route('contacts.show', ['id' => $contact->id]);
+        $qrCode = QrCode::size(150)->encoding('UTF-8')->errorCorrection('L')->generate($currentUrl);
+
+        return view('contact_detail', compact('contact', 'qrCode'));
+    }
     
-    // สร้าง URL ของหน้าเว็บปัจจุบัน
-    $currentUrl = url()->current(); // ใช้ url()->current() เพื่อดึง URL ของหน้าเว็บปัจจุบัน
 
-    // สร้าง QR Code ที่เก็บ URL ของหน้าปัจจุบัน
-    $qrContent = $currentUrl;
-
-    // สร้าง QR Code โดยใช้การเข้ารหัสเป็น UTF-8
-    $qrCode = QrCode::size(150) // ขนาด QR Code
-        ->encoding('UTF-8') // ใช้ UTF-8 เพื่อรองรับตัวอักษรที่หลากหลาย
-        ->errorCorrection('L') // ใช้การแก้ไขข้อผิดพลาดระดับต่ำ (ลดความซับซ้อน)
-        ->generate($qrContent);
-
-    // ส่งข้อมูลไปยัง View
-    return view('contact_detail', compact('contact', 'qrCode'));
-}
+    
 
     
     
@@ -45,20 +44,21 @@ class ContactController extends Controller
      * ดาวน์โหลดไฟล์ VCF
      */
     public function downloadVCF($id)
-{
-    // ดึงข้อมูลผู้ติดต่อจากฐานข้อมูล
-    $contact = Contact::findOrFail($id);
+    {
+        // ดึงข้อมูลผู้ติดต่อจากฐานข้อมูล
+        $contact = Contact::findOrFail($id);
+    
+        // สร้างเนื้อหา VCF
+        $vcfContent = $this->generateVCF($contact);
+    
+        // สร้างชื่อไฟล์โดยใช้ชื่อผู้ติดต่อ
+        $fileName = str_replace(' ', '_', $contact->name) . '.vcf';
+    
+        return response($vcfContent)
+            ->header('Content-Type', 'text/vcard')
+            ->header('Content-Disposition', "attachment; filename=\"{$fileName}\"");
+    }
 
-    // สร้างเนื้อหา VCF
-    $vcfContent = $this->generateVCF($contact);
-
-    // สร้างชื่อไฟล์โดยใช้ชื่อผู้ติดต่อ
-    $fileName = str_replace(' ', '_', $contact->name) . '.vcf';
-
-    return response($vcfContent)
-        ->header('Content-Type', 'text/vcard')
-        ->header('Content-Disposition', "attachment; filename=\"{$fileName}\"");
-}
 
 private function generateVCF(Contact $contact): string
 {
@@ -143,11 +143,11 @@ public function showContacts(Request $request)
 }
 
 
-    // แสดงหน้าสร้างเจ้าหน้าที่
-    public function create()
-    {
-        return view('contacts.create');
-    }
+  // แสดงหน้าสร้างเจ้าหน้าที่
+  public function create()
+  {
+      return view('contacts.create');
+  }
 
     // บันทึกข้อมูลเจ้าหน้าที่ใหม่
     public function store(Request $request)
@@ -168,9 +168,11 @@ public function showContacts(Request $request)
 
     // จัดการข้อมูลโปรไฟล์ภาพ
     if ($request->hasFile('profile_image')) {
-        $imagePath = $request->file('profile_image')->store('profile_images', 'public');
+        $image = $request->file('profile_image');
+        $imagePath = $image->storeAs('profile_images', uniqid() . '.' . $image->extension(), 'public');
         $data['profile_image'] = $imagePath;
     }
+    
 
     // บันทึกข้อมูลเจ้าหน้าที่
     Contact::create($data);
@@ -202,28 +204,70 @@ public function showContacts(Request $request)
             'social.*' => 'nullable|url',
         ]);
     
-        // จัดการข้อมูลโปรไฟล์ภาพ
+        // ถ้ามีรูปใหม่ ลบรูปเก่าแล้วอัปโหลดใหม่
         if ($request->hasFile('profile_image')) {
-            $imagePath = $request->file('profile_image')->store('profile_images', 'public');
+            if ($contact->profile_image) {
+                Storage::disk('public')->delete($contact->profile_image);
+            }
+    
+            $image = $request->file('profile_image');
+            $imagePath = $image->storeAs('profile_images', uniqid() . '.' . $image->extension(), 'public');
             $data['profile_image'] = $imagePath;
         }
     
-        // อัปเดตข้อมูลเจ้าหน้าที่
         $contact->update($data);
     
-        return redirect()->route('contacts.index')->with('success', 'อัปเดตข้อมูลเจ้าหน้าที่สำเร็จ');
+        return redirect()->route('contacts.index')->with('success', 'อัปเดตข้อมูลสำเร็จ');
     }
+    
 
 
     // ลบข้อมูลเจ้าหน้าที่
     public function destroy(Contact $contact)
-    {
-        if ($contact->profile_image) {
-            Storage::disk('public')->delete($contact->profile_image);
-        }
-
-        $contact->delete();
-
-        return redirect()->route('contacts.index')->with('success', 'ลบข้อมูลเจ้าหน้าที่สำเร็จ!');
+{
+    if (!empty($contact->profile_image) && Storage::disk('public')->exists($contact->profile_image)) {
+        Storage::disk('public')->delete($contact->profile_image);
     }
+
+    $contact->delete();
+
+    return redirect()->route('contacts.index')->with('success', 'ลบข้อมูลสำเร็จ!');
+}
+
+
+
+
+public function showMyCard()
+{
+    $contact = Contact::findOrFail(auth()->user()->id);
+    $qrCode = \QrCode::size(150)->encoding('UTF-8')->errorCorrection('L')->generate(route('contacts.show', ['id' => $contact->id]));
+
+    return view('contacts.mycard', compact('contact', 'qrCode'));
+}
+
+
+public function showECard()
+{
+    $user = Auth::user(); // ดึงข้อมูล User ที่ล็อกอิน
+
+    // ✅ ดึง Contact ของ User
+    $contact = Contact::where('id', $user->id)->first();
+
+    // ❌ ถ้าไม่พบ Contact ให้ redirect กลับและแจ้งเตือน
+    if (!$contact) {
+        return redirect()->route('home')->with('error', 'ไม่พบข้อมูลเจ้าหน้าที่');
+    }
+
+    // ✅ สร้าง QR Code
+    $currentUrl = route('contacts.show', ['id' => $contact->id]);
+    $qrCode = QrCode::size(150)->encoding('UTF-8')->errorCorrection('L')->generate($currentUrl);
+
+    return view('contacts.e-card', compact('contact', 'qrCode'));
+} 
+
+
+
+
+
+
 }
