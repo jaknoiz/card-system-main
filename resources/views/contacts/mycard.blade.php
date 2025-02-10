@@ -15,7 +15,7 @@
 h1 {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #fff;
+    color: #000;
     margin-bottom: 20px;
 }
 
@@ -102,19 +102,19 @@ h1 {
         <!-- Contact Details Card -->
         <a href="{{ route('contacts.show', ['id' => auth()->user()->id]) }}"  class="card">
             <div class="icon">
-                <img src="user-icon.png" alt="User">
+                
             </div>
-            <h2>Contact Details</h2>
-            <p>View your full contact information</p>
+            <h2>นามบัตรดิจิทัล</h2>
+            <p>แสดงนามบัตรดิจิทัลของเจ้าหน้าที่</p>
         </a>
 
         <!-- E-Card -->
         <a href="{{ route('e-card') }}" class="card blue" target="_blank" rel="noopener noreferrer">
             <div class="icon">
-                <img src="id-card-icon.png" alt="E-Card">
+                
             </div>
             <h2>E-Card</h2>
-            <p>View your digital ID card</p>
+            <p>แสดงบัตร E-Card ของเจ้าหน้าที่</p>
         </a>
     </div>
 </div>

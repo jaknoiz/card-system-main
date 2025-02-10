@@ -144,9 +144,9 @@
                     <img src="{{ asset('storage/' . $contact->profile_image) }}" alt="Profile Image">
                 </div>
                 <div class="info">
-                    <p><strong>เลขประจำตัวนักศึกษา:</strong> {{ $contact->id }}</p>
+                    <p><strong>เลขประจำเจ้าหน้าที่:</strong> {{ $contact->id }}</p>
                     <p><strong>ชื่อ-นามสกุล:</strong> {{ $contact->name }}</p>
-                    <p><strong>คณะ:</strong> {{ $contact->organization }}</p>
+                    <p><strong>องค์กร:</strong> {{ $contact->organization }}</p>
                 </div>
             </div>
 
