@@ -151,10 +151,9 @@
             </div>
 
             <div class="card-face card-back">
-                <div class="qr-code">
-                    <img src="{{ asset('image/qr.png') }}" alt="QR Code">
-                </div>
-                <p>สแกน QR Code เพื่อดูข้อมูลเพิ่มเติม</p>
+            <div class="qr-code">
+                {!! $qrCode !!}
+            </div>
             </div>
         </div>
     </div>

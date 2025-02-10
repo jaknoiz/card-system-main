@@ -250,12 +250,17 @@ public function showECard()
         return redirect()->route('home')->with('error', 'ไม่พบข้อมูลเจ้าหน้าที่');
     }
 
-    // ✅ สร้าง QR Code
-    $currentUrl = route('contacts.show', ['id' => $contact->id]);
-    $qrCode = QrCode::size(150)->encoding('UTF-8')->errorCorrection('L')->generate($currentUrl);
+    // ✅ สร้างข้อมูลที่ต้องการส่งไปให้เครื่องสแกน (เช่น ชื่อ, เลขประจำตัว)
+    $data = json_encode([
+        'id' => $contact->id,
+        'name' => $contact->name,
+    ]);
+
+    // ✅ สร้าง QR Code ที่เก็บข้อมูลนี้
+    $qrCode = QrCode::size(200)->encoding('UTF-8')->errorCorrection('L')->generate($data);
 
     return view('contacts.e-card', compact('contact', 'qrCode'));
-} 
+}
 
 
 
