@@ -28,5 +28,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/contacts/{contact}/edit', [ContactController::class, 'edit'])->name('contacts.edit');
         Route::put('/contacts/{contact}', [ContactController::class, 'update'])->name('contacts.update');
         Route::delete('/contacts/{contact}', [ContactController::class, 'destroy'])->name('contacts.destroy');
+        Route::get('/contacts/{id}/popup', [ContactController::class, 'showContactPopup'])->name('contacts.popup');
+        Route::get('/create', [ContactController::class, 'newcreate'])->name('create');
     });
 });
+
+
+
+
+

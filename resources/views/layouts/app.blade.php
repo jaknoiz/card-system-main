@@ -86,7 +86,7 @@
                     <a class="nav-link" href="{{ route('contacts.index') }}">รายชื่อผู้ติดต่อ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('contacts.create') }}">เพิ่มผู้ติดต่อ</a>
+                    <a class="nav-link" href="{{ route('create') }}">เพิ่มผู้ติดต่อ</a>
                 </li>
 
                 @auth

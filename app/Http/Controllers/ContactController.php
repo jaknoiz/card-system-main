@@ -137,9 +137,13 @@ public function showContacts(Request $request)
 
   // แสดงหน้าสร้างเจ้าหน้าที่
   public function create()
-  {
-      return view('contacts.create');
-  }
+{
+    return view('contacts.create');
+}
+public function newcreate()
+{
+    return view('create');
+}
 
     // บันทึกข้อมูลเจ้าหน้าที่ใหม่
     public function store(Request $request)
@@ -262,9 +266,14 @@ public function showECard()
     return view('contacts.e-card', compact('contact', 'qrCode'));
 }
 
-
-
-
+public function showContactPopup($id)
+{
+    // ดึงข้อมูลเจ้าหน้าที่ตาม ID
+    $contact = Contact::findOrFail($id);
+    
+    // ส่งข้อมูลไปยัง View สำหรับ popup
+    return response()->json($contact);
+}
 
 
 }

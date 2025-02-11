@@ -4,7 +4,7 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary fw-bold">รายชื่อเจ้าหน้าที่</h2>
-        <a href="{{ route('contacts.create') }}" class="btn btn-success"> + เพิ่มเจ้าหน้าที่ใหม่</a>
+        <a href="{{ route('create') }}" class="btn btn-success"> + เพิ่มเจ้าหน้าที่ใหม่</a>
     </div>
 
     <!-- ฟอร์มค้นหา -->
@@ -38,9 +38,10 @@
                         <td>{{ $contact->email }}</td>
                         <td>{{ $contact->phone }}</td>
                         <td class="text-center">
-                            <a href="{{ route('contacts.mycard', $contact->id) }}" class="btn btn-info btn-sm">
+                            <!-- ปุ่มดูข้อมูลเจ้าหน้าที่ -->
+                            <button class="btn btn-info btn-sm view-contact" data-id="{{ $contact->id }}">
                                 <i class="fas fa-eye"></i> ดูข้อมูลเจ้าหน้าที่
-                            </a>
+                            </button>
                             <a href="{{ route('contacts.edit', $contact->id) }}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i> แก้ไข
                             </a>
@@ -71,16 +72,61 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Bootstrap Modal (Popup) -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactModalLabel">ข้อมูลเจ้าหน้าที่</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>ชื่อ:</strong> <span id="contact_name"></span></p>
+                <p><strong>ตำแหน่ง:</strong> <span id="contact_position"></span></p>
+                <p><strong>อีเมล:</strong> <span id="contact_email"></span></p>
+                <p><strong>เบอร์โทร:</strong> <span id="contact_phone"></span></p>
+                <p><strong>เบอร์สำนักงาน:</strong> <span id="contact_office_phone"></span></p>
+                <p><strong>ที่อยู่:</strong> <span id="contact_address"></span></p>
+                <p><strong>องค์กร:</strong> <span id="contact_organization"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
 
-@if (session('success'))
-    <script>
-        Swal.fire({
-            title: 'สำเร็จ!',
-            text: @json(session('success')),
-            icon: 'success',
-            confirmButtonText: 'ตกลง'
+
+<!-- JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".view-contact").click(function() {
+            let contactId = $(this).data("id");
+            console.log("กดดูข้อมูลเจ้าหน้าที่ ID:", contactId); // Debug
+
+            $.ajax({
+                url: "/contacts/" + contactId + "/popup", // ใช้ route ที่เราได้สร้างไว้
+                type: "GET",
+                success: function(data) {
+                    console.log("ข้อมูลที่ได้จาก Server:", data); // Debug
+
+                    // แสดงข้อมูลใน modal (popup)
+                    $("#contact_name").text(data.name);
+                    $("#contact_position").text(data.position);
+                    $("#contact_email").text(data.email);
+                    $("#contact_phone").text(data.phone);
+                    $("#contact_office_phone").text(data.office_phone);
+                    $("#contact_address").text(data.address);
+                    $("#contact_organization").text(data.organization);
+
+                    // เปิด modal
+                    $("#contactModal").modal("show");
+                },
+                error: function() {
+                    console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+                    alert("ไม่สามารถโหลดข้อมูลเจ้าหน้าที่ได้");
+                }
+            });
         });
-    </script>
-@endif
+    });
+</script>
+
 @endsection
