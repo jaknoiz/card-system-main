@@ -147,34 +147,45 @@ public function newcreate()
 
     // บันทึกข้อมูลเจ้าหน้าที่ใหม่
     public function store(Request $request)
-{
-    $data = $request->validate([
-        'name' => 'required|string|max:255',
-        'title' => 'nullable|string|max:255',
-        'position' => 'nullable|string|max:255',
-        'email' => 'required|email|unique:contacts,email',
-        'phone' => 'nullable|string|max:20',
-        'office_phone' => 'nullable|string|max:20',
-        'address' => 'nullable|string',
-        'organization' => 'nullable|string|max:255',
-        'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'social' => 'nullable|array',
-        'social.*' => 'nullable|url',
-    ]);
-
-    // จัดการข้อมูลโปรไฟล์ภาพ
-    if ($request->hasFile('profile_image')) {
-        $image = $request->file('profile_image');
-        $imagePath = $image->storeAs('profile_images', uniqid() . '.' . $image->extension(), 'public');
-        $data['profile_image'] = $imagePath;
+    {
+        try {
+            $data = $request->validate([
+                'id' => 'nullable|integer|unique:contacts,id',
+                'name' => 'required|string|max:255',
+                'title' => 'nullable|string|max:255',
+                'position' => 'nullable|string|max:255',
+                'email' => 'required|email|unique:contacts,email',
+                'phone' => 'nullable|string|max:20',
+                'office_phone' => 'nullable|string|max:20',
+                'address' => 'nullable|string',
+                'organization' => 'nullable|string|max:255',
+                'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'social' => 'nullable|array',
+                'social.*' => 'nullable|url',
+            ]);
+    
+            // จัดการข้อมูลโปรไฟล์ภาพ
+            if ($request->hasFile('profile_image')) {
+                $image = $request->file('profile_image');
+                $imagePath = $image->storeAs('profile_images', uniqid() . '.' . $image->extension(), 'public');
+                $data['profile_image'] = $imagePath;
+            }
+    
+            // ถ้ามีการระบุ id ให้ใช้ id นั้น ไม่งั้นให้ใช้ id ที่เพิ่มโดยอัตโนมัติ
+            $contact = new Contact();
+            $contact->id = $request->id ?? null;
+            $contact->fill($data);
+            $contact->save();
+    
+            // ถ้าบันทึกสำเร็จ
+            return redirect()->route('contacts.index')->with('success', 'เพิ่มข้อมูลเจ้าหน้าที่สำเร็จ');
+    
+        } catch (\Exception $e) {
+            // ถ้ามีข้อผิดพลาด
+            return redirect()->route('create')->with('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
+        }
     }
     
-
-    // บันทึกข้อมูลเจ้าหน้าที่
-    Contact::create($data);
-
-    return redirect()->route('contacts.index')->with('success', 'เพิ่มข้อมูลเจ้าหน้าที่สำเร็จ');
-}
 
 
     // แสดงหน้าฟอร์มแก้ไขข้อมูล
@@ -185,8 +196,10 @@ public function newcreate()
 
     // อัปเดตข้อมูลเจ้าหน้าที่
     public function update(Request $request, Contact $contact)
-    {
+{
+    try {
         $data = $request->validate([
+            'id' => 'required|integer|unique:contacts,id,' . $contact->id, // ตรวจสอบว่าห้ามซ้ำ ยกเว้นไอดีตัวเอง
             'name' => 'required|string|max:255',
             'title' => 'nullable|string|max:255',
             'position' => 'nullable|string|max:255',
@@ -199,22 +212,31 @@ public function newcreate()
             'social' => 'nullable|array',
             'social.*' => 'nullable|url',
         ]);
-    
+
         // ถ้ามีรูปใหม่ ลบรูปเก่าแล้วอัปโหลดใหม่
         if ($request->hasFile('profile_image')) {
             if ($contact->profile_image) {
                 Storage::disk('public')->delete($contact->profile_image);
             }
-    
+
             $image = $request->file('profile_image');
             $imagePath = $image->storeAs('profile_images', uniqid() . '.' . $image->extension(), 'public');
             $data['profile_image'] = $imagePath;
         }
-    
+
+        // อัปเดตไอดี (ID)
+        $contact->id = $request->id;
         $contact->update($data);
-    
+
+        // ถ้าอัปเดตสำเร็จ
         return redirect()->route('contacts.index')->with('success', 'อัปเดตข้อมูลสำเร็จ');
+
+    } catch (\Exception $e) {
+        // ถ้ามีข้อผิดพลาด
+        return redirect()->route('contacts.edit', $contact->id)->with('error', 'เกิดข้อผิดพลาด: ' . $e->getMessage());
     }
+}
+
     
 
 

@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
      <!-- เพิ่ม Favicon -->
      <link rel="icon" type="image/png" href="{{ asset('image/tsu.png') }}">
-    <style>
-        /* General Reset */
-        * {
+     <style>
+      /* General Reset */
+      * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -189,7 +189,128 @@
             transform: translateY(-3px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
-    </style>
+
+    /* Responsive Design */
+@media screen and (max-width: 1024px) {
+    .card {
+        padding: 20px;
+    }
+
+    .header img {
+        width: 250px;
+    }
+
+    .profile-info img {
+        width: 220px;
+        height: 270px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .card {
+        width: 95%;
+        max-width: 600px;
+        padding: 15px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .header img {
+        width: 200px;
+        margin-bottom: 10px;
+    }
+
+    .header .header-text {
+        text-align: center;
+    }
+
+    .header .header-text h1 {
+        font-size: 26px;
+    }
+
+    .header .header-text h2 {
+        font-size: 18px;
+    }
+
+    .profile-info img {
+        width: 180px;
+        height: 220px;
+    }
+
+    .profile-info h2 {
+        font-size: 24px;
+    }
+
+    .profile-info p {
+        font-size: 16px;
+    }
+
+    .contact-info {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .social-icons {
+        justify-content: center;
+    }
+
+    .social-icons a img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .btn {
+        font-size: 16px;
+        padding: 10px 25px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .card {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .header img {
+        width: 150px;
+    }
+
+    .profile-info img {
+        width: 150px;
+        height: 180px;
+    }
+
+    .profile-info h2 {
+        font-size: 22px;
+    }
+
+    .profile-info p {
+        font-size: 14px;
+    }
+
+    .contact-info div {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .social-icons a img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 8px 20px;
+    }
+}
+
+
+</style>
+
 </head>
 <body>
     <div class="card">

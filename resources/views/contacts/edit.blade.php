@@ -13,40 +13,52 @@
         <div class="card mb-4">
             <div class="card-header bg-primary text-white fw-bold">ข้อมูลส่วนตัว</div>
             <div class="card-body">
-                <div class="row">
+                <div class="row g-3">
+                    <!-- ไอดี (สามารถแก้ไขได้) -->
+                    <div class="col-md-6">
+                        <label for="id" class="form-label">ไอดี</label>
+                        <input type="text" name="id" class="form-control" 
+                            value="{{ old('id', $contact->id ?? '') }}" required>
+                        @error('id')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+
                     <!-- ชื่อ-นามสกุล -->
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6">
                         <label for="name" class="form-label">ชื่อ-นามสกุล</label>
-                        <input type="text" name="name" class="form-control" value="{{ old('name', $contact->name) }}" required>
+                        <input type="text" name="name" class="form-control" 
+                            value="{{ old('name', $contact->name ?? '') }}" required>
                         @error('name')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
 
                     <!-- ตำแหน่ง -->
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6">
                         <label for="title" class="form-label">ตำแหน่ง</label>
-                        <input type="text" name="title" class="form-control" value="{{ old('title', $contact->title) }}">
+                        <input type="text" name="title" class="form-control" 
+                            value="{{ old('title', $contact->title ?? '') }}">
                         @error('title')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
-                </div>
 
-                <div class="row">
                     <!-- ตำแหน่งบริหาร -->
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6">
                         <label for="position" class="form-label">ตำแหน่งบริหาร</label>
-                        <input type="text" name="position" class="form-control" value="{{ old('position', $contact->position) }}">
+                        <input type="text" name="position" class="form-control" 
+                            value="{{ old('position', $contact->position ?? '') }}">
                         @error('position')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
 
                     <!-- องค์กร -->
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-12">
                         <label for="organization" class="form-label">องค์กร</label>
-                        <input type="text" name="organization" class="form-control" value="{{ old('organization', $contact->organization) }}">
+                        <input type="text" name="organization" class="form-control" 
+                            value="{{ old('organization', $contact->organization ?? '') }}">
                         @error('organization')
                             <small class="text-danger">{{ $message }}</small>
                         @enderror
@@ -201,4 +213,22 @@
         }
     }
 </script>
+
+<!-- เพิ่ม SweetAlert2 CDN ใน <head> -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- แจ้งเตือนเมื่อมี Error -->
+@if(session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด!',
+            text: '{{ session('error') }}',
+            showConfirmButton: false,
+            timer: 3000,
+            toast: true,
+            position: 'top-end'
+        });
+    </script>
+@endif
 @endsection

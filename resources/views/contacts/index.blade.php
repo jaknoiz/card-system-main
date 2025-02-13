@@ -20,11 +20,13 @@
         </div>
     </form>
 
+
     <!-- ตารางแสดงข้อมูล -->
     <div class="table-responsive">
         <table class="table table-striped table-hover align-middle">
             <thead class="table-primary">
                 <tr>
+                    <th>รหัสประจำตัว</th>
                     <th>ชื่อ</th>
                     <th>อีเมล</th>
                     <th>เบอร์โทร</th>
@@ -34,6 +36,7 @@
             <tbody>
                 @forelse($contacts as $contact)
                     <tr>
+                        <td>{{ $contact->id }}</td>
                         <td>{{ $contact->name }}</td>
                         <td>{{ $contact->email }}</td>
                         <td>{{ $contact->phone }}</td>
@@ -81,6 +84,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <p><strong>ไอดี:</strong> <span id="contact_id"></span></p>
                 <p><strong>ชื่อ:</strong> <span id="contact_name"></span></p>
                 <p><strong>ตำแหน่ง:</strong> <span id="contact_position"></span></p>
                 <p><strong>อีเมล:</strong> <span id="contact_email"></span></p>
@@ -109,6 +113,7 @@
                     console.log("ข้อมูลที่ได้จาก Server:", data); // Debug
 
                     // แสดงข้อมูลใน modal (popup)
+                    $("#contact_id").text(data.id);
                     $("#contact_name").text(data.name);
                     $("#contact_position").text(data.position);
                     $("#contact_email").text(data.email);
@@ -126,6 +131,53 @@
                 }
             });
         });
+    });
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Success Notification
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'สำเร็จ!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true,
+                position: 'top-end'
+            });
+        @endif
+
+        // Error Notification
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด!',
+                text: '{{ session('error') }}',
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true,
+                position: 'top-end'
+            });
+        @endif
+
+        // Warning Notification
+        @if(session('warning'))
+            Swal.fire({
+                icon: 'warning',
+                title: 'คำเตือน!',
+                text: '{{ session('warning') }}',
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true,
+                position: 'top-end'
+            });
+        @endif
     });
 </script>
 

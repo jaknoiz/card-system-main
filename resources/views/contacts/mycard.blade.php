@@ -113,8 +113,8 @@ h1 {
             <div class="icon">
                 
             </div>
-            <h2>E-Card</h2>
-            <p>แสดงบัตร E-Card ของเจ้าหน้าที่</p>
+            <h2>Virtual Employee Card</h2>
+            <p>แสดงบัตร Virtual Employee Card ของเจ้าหน้าที่</p>
         </a>
     </div>
 </div>

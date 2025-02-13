@@ -13,7 +13,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            background:  #ffffff;
             height: 100vh;
             flex-direction: column;
         }
@@ -56,12 +56,16 @@
         }
 
         .card-front {
-            background: linear-gradient(180deg, #007bff, #0056b3);
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-            flex-direction: column;
-        }
+        background: linear-gradient(145deg, #007bff, #004f9e);
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        border: 3px solid #fff;
+    }
 
         .card-back {
             background: #fff;
@@ -70,29 +74,40 @@
         }
 
         .logo img {
-            width: 90px;
-        }
+        width: 80px;
+        margin-bottom: 10px;
+    }
 
-        .profile {
-            margin: 20px auto;
-            width: 130px;
-            height: 160px;
-            border-radius: 8px;
-            background: #fff;
-            overflow: hidden;
-            border: 3px solid #ddd;
-        }
+    .profile {
+        margin: 20px auto;
+        width: 150px;
+        height: 200px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 4px solid #fff;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
 
         .profile img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+        .info {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
         .info p {
-            margin: 6px 0;
-            font-size: 18px;
-        }
+        margin: 4px 0;
+        font-size: 16px;
+        line-height: 1.4;
+    }
+    .info p strong {
+        color: #ffcc00;
+    }
 
         .qr-code img {
             width: 220px;
@@ -129,6 +144,21 @@
             width: 32px;
             height: 32px;
         }
+        .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: #e0e0e0;
+        letter-spacing: 1px;
+        margin: 0;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
     </style>
 </head>
 <body>

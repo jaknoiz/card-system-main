@@ -18,6 +18,14 @@
             <div class="card-header bg-primary text-white fw-bold">ข้อมูลส่วนตัว</div>
             <div class="card-body">
                 <div class="row">
+                    <!-- ไอดี (สามารถแก้ไขได้) -->
+                <div class="col-md-6 mb-3">
+                    <label for="id" class="form-label">ไอดี</label>
+                    <input type="text" name="id" class="form-control" value="{{ old('id', $contact->id ?? '') }}" required>
+                    @error('id')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
                     <!-- ชื่อ-นามสกุล -->
                     <div class="col-md-6 mb-3">
                         <label for="name" class="form-label">ชื่อ-นามสกุล</label>
